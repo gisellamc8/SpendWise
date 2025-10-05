@@ -50,9 +50,9 @@ export default function ProductCard({ product }: ProductCardProps) {
           {product.snapEligible && (
             <Badge
               variant="default"
-              className="bg-green-600 hover:bg-green-700 text-white"
+              className="bg-green-600/50 hover:bg-green-700/60 text-white"
             >
-              SNAP
+              SNAP Eligible
             </Badge>
           )}
         </div>
