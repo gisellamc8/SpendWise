@@ -71,7 +71,6 @@ const suggestRepeatOrderFlow = ai.defineFlow(
         suggestionReason: 'The user does not have a previous order.',
       };
     }
-
     const {output} = await prompt(input);
     return output!;
   }
