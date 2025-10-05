@@ -79,11 +79,9 @@ export const processProductData = (data: any[]): Product[] => {
       expirationDays: differenceInDays(expirationDate, new Date()),
       imageUrl: url,
       imageHint: hint,
-      couponEligible: Math.random() > 0.5,
-      onSale: Math.random() > 0.5,
-      snapEligible: Math.random() > 0.5,
+      couponEligible: p.couponEligible ?? Math.random() > 0.5,
+      onSale: p.onSale ?? Math.random() > 0.5,
+      snapEligible: p.snapEligible ?? Math.random() > 0.5,
     };
   });
 };
-
-    
