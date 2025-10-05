@@ -21,8 +21,18 @@ export default function Home() {
       <AppHeader />
       <main className="flex-1">
         <div className="container mx-auto px-4 py-8">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            {/* Left Column */}
+          <div className="space-y-8">
+            <RepeatOrderSuggestion />
+            <div className="relative">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground h-5 w-5" />
+              <Input
+                placeholder="Search for products..."
+                className="pl-12 h-12 text-lg"
+              />
+            </div>
+          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mt-8">
+            {/* Left Column - New Arrivals */}
             <aside className="lg:col-span-3 space-y-8">
               <Card>
                 <CardHeader>
@@ -49,7 +59,19 @@ export default function Home() {
                   ))}
                 </CardContent>
               </Card>
+            </aside>
 
+            {/* Center Column - Products */}
+            <section className="lg:col-span-6 space-y-8">
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-2 gap-6">
+                {products.map((product) => (
+                  <ProductCard key={product.id} product={product} />
+                ))}
+              </div>
+            </section>
+
+            {/* Right Column - Sales & Coupons */}
+            <aside className="lg:col-span-3 space-y-8">
               <Card>
                 <CardHeader>
                   <CardTitle className="font-headline">
@@ -74,23 +96,6 @@ export default function Home() {
                 </CardContent>
               </Card>
             </aside>
-
-            {/* Center Column */}
-            <section className="lg:col-span-9 space-y-8">
-              <RepeatOrderSuggestion />
-              <div className="relative">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground h-5 w-5" />
-                <Input
-                  placeholder="Search for products..."
-                  className="pl-12 h-12 text-lg"
-                />
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-                {products.map((product) => (
-                  <ProductCard key={product.id} product={product} />
-                ))}
-              </div>
-            </section>
           </div>
         </div>
       </main>
