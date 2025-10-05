@@ -4,17 +4,14 @@
 import Image from 'next/image';
 import { useCart } from '@/context/cart-context';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Minus, Plus, ShoppingCart, Trash2, X, Sparkles } from 'lucide-react';
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from './ui/card';
-import { Separator } from './ui/separator';
+  Minus,
+  Plus,
+  ShoppingCart,
+  Trash2,
+  Tag,
+  Sparkles,
+} from 'lucide-react';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -28,21 +25,16 @@ import {
 } from '@/components/ui/alert-dialog';
 import { ScrollArea } from './ui/scroll-area';
 import { coupons } from '@/lib/data';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { Label } from './ui/label';
 import { useMemo, useState } from 'react';
 import { Coupon } from '@/types';
 import { useToast } from '@/hooks/use-toast';
+import { Badge } from './ui/badge';
+import { cn } from '@/lib/utils';
 
 export default function ShoppingCartSheet() {
-  const { state, dispatch, totalItems, totalPrice } = useCart();
-  const [selectedCoupon, setSelectedCoupon] = useState<string>('');
+  const { state, dispatch, subtotal, discount, total } = useCart();
+  const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
   const { toast } = useToast();
 
   const handleQuantityChange = (id: string, quantity: number) => {
@@ -61,7 +53,7 @@ export default function ShoppingCartSheet() {
 
     return coupons.filter((coupon) => {
       if (!coupon.eligible_brands && !coupon.eligible_item_names) {
-        return true; // Coupon is generic
+        return true;
       }
       if (
         coupon.eligible_brands &&
@@ -83,11 +75,7 @@ export default function ShoppingCartSheet() {
     if (eligibleCoupons.length > 0) {
       // Simple logic: apply the first eligible coupon
       const bestCoupon = eligibleCoupons[0];
-      setSelectedCoupon(bestCoupon.code);
-      toast({
-        title: 'Coupon Applied!',
-        description: `${bestCoupon.title}`,
-      });
+      handleCouponSelect(bestCoupon);
     } else {
       toast({
         variant: 'destructive',
@@ -97,45 +85,53 @@ export default function ShoppingCartSheet() {
     }
   };
 
+  const handleCouponSelect = (coupon: Coupon) => {
+    if (selectedCoupon?.code === coupon.code) {
+      setSelectedCoupon(null);
+      dispatch({ type: 'APPLY_COUPON', payload: null });
+    } else {
+      setSelectedCoupon(coupon);
+      dispatch({ type: 'APPLY_COUPON', payload: coupon });
+      toast({
+        title: 'Coupon Applied!',
+        description: `${coupon.title}`,
+      });
+    }
+  };
+
   return (
     <div className="h-full flex flex-col">
       <div className="relative mt-4">
-        <div className="grid w-full max-w-sm items-center gap-1.5">
+        <div className="grid w-full items-center gap-1.5">
           <Label htmlFor="coupon">Apply a Coupon</Label>
-          <div className="flex gap-2">
-            <Select
-              value={selectedCoupon}
-              onValueChange={setSelectedCoupon}
-              disabled={eligibleCoupons.length === 0}
-            >
-              <SelectTrigger id="coupon" className="w-full">
-                <SelectValue placeholder="Select an eligible coupon" />
-              </SelectTrigger>
-              <SelectContent>
-                {eligibleCoupons.length > 0 ? (
-                  eligibleCoupons.map((coupon) => (
-                    <SelectItem key={coupon.code} value={coupon.code}>
-                      <div className="flex flex-col">
-                        <p className="font-semibold">{coupon.title}</p>
-                        <p className="text-xs text-muted-foreground">
-                          {coupon.description}
-                        </p>
-                      </div>
-                    </SelectItem>
-                  ))
-                ) : (
-                  <div className="p-4 text-center text-sm text-muted-foreground">
-                    No eligible coupons for your current items.
-                  </div>
-                )}
-              </SelectContent>
-            </Select>
+          <div className="flex gap-2 items-center">
+            <div className="flex-1 flex gap-2 flex-wrap">
+              {eligibleCoupons.length > 0 ? (
+                eligibleCoupons.map((coupon) => (
+                  <Badge
+                    key={coupon.code}
+                    variant={selectedCoupon?.code === coupon.code ? 'default' : 'outline'}
+                    className={cn('cursor-pointer flex gap-1.5 items-center')}
+                    onClick={() => handleCouponSelect(coupon)}
+                  >
+                    <Tag className="h-3 w-3" />
+                    {coupon.title}
+                  </Badge>
+                ))
+              ) : (
+                <p className="text-xs text-muted-foreground p-2">
+                  No coupons available for your current items.
+                </p>
+              )}
+            </div>
+
             <Button
               variant="outline"
               size="icon"
               onClick={applyBestCoupon}
               aria-label="Apply Best Coupon"
               disabled={eligibleCoupons.length === 0}
+              className="h-8 w-8 shrink-0"
             >
               <Sparkles className="h-4 w-4" />
             </Button>
@@ -203,10 +199,18 @@ export default function ShoppingCartSheet() {
         </div>
       </ScrollArea>
       {state.items.length > 0 && (
-        <div className="mt-auto border-t pt-4">
+        <div className="mt-auto border-t pt-4 space-y-2">
+          <div className="flex justify-between text-muted-foreground">
+            <span>Subtotal</span>
+            <span>${subtotal.toFixed(2)}</span>
+          </div>
+          <div className="flex justify-between text-muted-foreground">
+            <span>Discount</span>
+            <span className="text-green-600">-${discount.toFixed(2)}</span>
+          </div>
           <div className="flex justify-between font-bold text-lg mb-4">
             <span>Total</span>
-            <span>${totalPrice.toFixed(2)}</span>
+            <span>${total.toFixed(2)}</span>
           </div>
           <CheckoutDialog />
         </div>

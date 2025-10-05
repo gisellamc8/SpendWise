@@ -42,6 +42,8 @@ export type Coupon = {
   description: string;
   eligible_brands?: string[];
   eligible_item_names?: string[];
+  discountValue: number;
+  discountType: 'percentage' | 'fixed';
 };
 
 export type Notification = {
@@ -83,3 +85,4 @@ export const processProductData = (data: any[]): Product[] => {
     };
   });
 };
+
