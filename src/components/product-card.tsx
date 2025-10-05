@@ -15,7 +15,7 @@ import { Calendar, Plus, Tag } from 'lucide-react';
 import { useCart } from '@/context/cart-context';
 import StarRating from './star-rating';
 import { Badge } from './ui/badge';
-import { addDays, format } from 'date-fns';
+import { format } from 'date-fns';
 
 interface ProductCardProps {
   product: Product;
@@ -23,7 +23,6 @@ interface ProductCardProps {
 
 export default function ProductCard({ product }: ProductCardProps) {
   const { addToCart } = useCart();
-  const expirationDate = addDays(new Date(), product.expirationDays);
 
   return (
     <Card className="flex flex-col overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300 bg-card">
@@ -65,7 +64,7 @@ export default function ProductCard({ product }: ProductCardProps) {
           <StarRating rating={product.rating} />
           <div className="flex items-center gap-1.5">
             <Calendar className="w-4 h-4" />
-            <span>Expires {format(expirationDate, 'MMM d, yyyy')}</span>
+            <span>Expires {format(product.expirationDate, 'MMM d, yyyy')}</span>
           </div>
         </div>
         <CardDescription className="flex-1 text-base font-bold text-foreground">
