@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { AppLogo } from './icons';
+import Image from 'next/image';
 import Notifications from './notifications';
 import {
   DropdownMenu,
@@ -37,7 +37,7 @@ export default function AppHeader() {
     <header className="border-b sticky top-0 bg-background/95 backdrop-blur-sm z-10">
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
         <Link href="/" className="flex items-center gap-3">
-          <AppLogo width={36} height={36} />
+          <Image src="/logo1.png" alt="SpendWise" width={36} height={36} />
           <h1 className="text-2xl font-bold font-headline text-foreground">
             SpendWise
           </h1>

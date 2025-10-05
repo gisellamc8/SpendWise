@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { useState, useEffect } from 'react';
 import { useForm, FormProvider, SubmitHandler } from 'react-hook-form';
@@ -21,7 +21,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { AppLogo } from '@/components/icons';
+import Image from 'next/image';
 import {
   useAuth,
   initiateEmailSignIn,
@@ -72,7 +72,7 @@ export default function LoginPage() {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center bg-background px-4">
         <div className="flex items-center gap-3 mb-4">
-          <AppLogo width={48} height={48} />
+          <Image src="/logo1.png" alt="SpendWise" width={48} height={48} />
           <h1 className="text-4xl font-bold font-headline text-foreground">
             SpendWise
           </h1>
@@ -84,8 +84,8 @@ export default function LoginPage() {
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-background px-4">
-       <div className="flex items-center gap-3 mb-4">
-          <AppLogo width={48} height={48} />
+     <div className="flex items-center gap-3 mb-4">
+       <Image src="/logo1.png" alt="SpendWise" width={48} height={48} />
           <h1 className="text-4xl font-bold font-headline text-foreground">
             SpendWise
           </h1>
