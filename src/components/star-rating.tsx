@@ -20,7 +20,7 @@ export default function StarRating({
           className={cn(
             'h-4 w-4',
             rating > index
-              ? 'text-accent fill-accent'
+              ? 'text-yellow-500 fill-yellow-500'
               : 'text-muted-foreground/50'
           )}
         />
