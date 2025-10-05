@@ -37,15 +37,25 @@ export default function ProductCard({ product }: ProductCardProps) {
             data-ai-hint={product.imageHint}
           />
         </div>
-        {product.couponEligible && (
-          <Badge
-            variant="default"
-            className="absolute top-2 right-2 bg-accent text-accent-foreground"
-          >
-            <Tag className="mr-1.5 h-3.5 w-3.5" />
-            Coupon
-          </Badge>
-        )}
+        <div className="absolute top-2 right-2 flex flex-col items-end gap-2">
+          {product.couponEligible && (
+            <Badge
+              variant="default"
+              className="bg-accent text-accent-foreground"
+            >
+              <Tag className="mr-1.5 h-3.5 w-3.5" />
+              Coupon
+            </Badge>
+          )}
+          {product.snapEligible && (
+            <Badge
+              variant="default"
+              className="bg-green-600 hover:bg-green-700 text-white"
+            >
+              SNAP
+            </Badge>
+          )}
+        </div>
       </CardHeader>
       <CardContent className="p-4 flex-1 flex flex-col">
         <CardTitle className="text-lg font-headline leading-tight mb-1">
