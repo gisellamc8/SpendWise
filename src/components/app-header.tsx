@@ -21,17 +21,13 @@ import {
   SheetTrigger,
 } from './ui/sheet';
 import { useCart } from '@/context/cart-context';
-import { useAuth, useUser, initiateAnonymousSignIn } from '@/firebase';
+import { useAuth, useUser } from '@/firebase';
 import Link from 'next/link';
 
 export default function AppHeader() {
   const { totalItems } = useCart();
   const { user, isUserLoading } = useUser();
   const auth = useAuth();
-
-  const handleGuestLogin = () => {
-    initiateAnonymousSignIn(auth);
-  };
 
   const handleSignOut = () => {
     auth.signOut();
@@ -74,11 +70,11 @@ export default function AppHeader() {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
               <DropdownMenuLabel>
-                {isUserLoading ? "Loading..." : user ? (user.isAnonymous ? "Guest Account" : user.email) : 'My Account'}
+                {isUserLoading ? "Loading..." : user ? (user.isAnonymous ? "Guest" : user.email) : 'My Account'}
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
               {isUserLoading ? null : user ? (
-                <DropdownMenuItem>
+                 <DropdownMenuItem>
                   <Button
                     className="w-full"
                     variant="outline"
@@ -89,22 +85,11 @@ export default function AppHeader() {
                   </Button>
                 </DropdownMenuItem>
               ) : (
-                <>
-                  <DropdownMenuItem>
-                    <Button className="w-full" asChild>
-                      <Link href="/login">Log In / Sign Up</Link>
-                    </Button>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <Button
-                      className="w-full"
-                      variant="secondary"
-                      onClick={handleGuestLogin}
-                    >
-                      Continue as Guest
-                    </Button>
-                  </DropdownMenuItem>
-                </>
+                <DropdownMenuItem>
+                  <Button className="w-full" asChild>
+                    <Link href="/login">Log In / Sign Up</Link>
+                  </Button>
+                </DropdownMenuItem>
               )}
             </DropdownMenuContent>
           </DropdownMenu>

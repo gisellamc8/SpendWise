@@ -35,14 +35,13 @@ import { Badge } from './ui/badge';
 import { cn } from '@/lib/utils';
 import { Separator } from './ui/separator';
 import Link from 'next/link';
-import { useAuth, initiateAnonymousSignIn, useUser } from '@/firebase';
+import { useUser } from '@/firebase';
 import { useRouter } from 'next/navigation';
 
 
 export default function ShoppingCartSheet() {
   const { state, dispatch, subtotal, discount, total } = useCart();
   const { toast } = useToast();
-  const auth = useAuth();
   const { user } = useUser();
   const router = useRouter();
 
@@ -114,10 +113,6 @@ export default function ShoppingCartSheet() {
         description: `${coupon.title}`,
       });
     }
-  };
-
-  const handleGuestCheckout = () => {
-    initiateAnonymousSignIn(auth);
   };
 
   const handleCheckout = () => {
@@ -294,7 +289,7 @@ export default function ShoppingCartSheet() {
               Proceed to Checkout <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
           ) : (
-            <CheckoutDialog onGuestCheckout={handleGuestCheckout} />
+            <CheckoutDialog onGuestCheckout={handleCheckout} />
           )}
         </div>
       )}
