@@ -33,6 +33,10 @@ export default function AppHeader() {
     initiateAnonymousSignIn(auth);
   };
 
+  const handleSignOut = () => {
+    auth.signOut();
+  }
+
   return (
     <header className="border-b sticky top-0 bg-background/95 backdrop-blur-sm z-10">
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
@@ -70,17 +74,15 @@ export default function AppHeader() {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
               <DropdownMenuLabel>
-                {user ? user.email : 'My Account'}
+                {isUserLoading ? "Loading..." : user ? (user.isAnonymous ? "Guest Account" : user.email) : 'My Account'}
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
-              {isUserLoading ? (
-                <DropdownMenuItem>Loading...</DropdownMenuItem>
-              ) : user ? (
+              {isUserLoading ? null : user ? (
                 <DropdownMenuItem>
                   <Button
                     className="w-full"
                     variant="outline"
-                    onClick={() => auth.signOut()}
+                    onClick={handleSignOut}
                   >
                     <LogOut className="mr-2 h-4 w-4" />
                     Log Out

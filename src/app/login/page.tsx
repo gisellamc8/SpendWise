@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm, FormProvider, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -26,10 +26,9 @@ import {
   useAuth,
   initiateEmailSignIn,
   initiateEmailSignUp,
+  useUser,
 } from '@/firebase';
 import { useRouter } from 'next/navigation';
-import { useUser } from '@/firebase/provider';
-import { useEffect } from 'react';
 
 const loginSchema = z.object({
   email: z.string().email({ message: 'Invalid email address.' }),
@@ -66,7 +65,22 @@ export default function LoginPage() {
     } else {
       initiateEmailSignIn(auth, data.email, data.password);
     }
+    // No await, router will redirect based on the useUser hook effect
   };
+
+  if (isUserLoading || user) {
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center bg-background px-4">
+        <div className="flex items-center gap-3 mb-4">
+          <AppLogo width={48} height={48} />
+          <h1 className="text-4xl font-bold font-headline text-foreground">
+            SpendWise
+          </h1>
+        </div>
+        <p>Loading...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-background px-4">

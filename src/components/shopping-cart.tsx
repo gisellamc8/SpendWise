@@ -35,13 +35,14 @@ import { Badge } from './ui/badge';
 import { cn } from '@/lib/utils';
 import { Separator } from './ui/separator';
 import Link from 'next/link';
-import { useAuth, initiateAnonymousSignIn } from '@/firebase';
+import { useAuth, initiateAnonymousSignIn, useUser } from '@/firebase';
 
 
 export default function ShoppingCartSheet() {
   const { state, dispatch, subtotal, discount, total } = useCart();
   const { toast } = useToast();
   const auth = useAuth();
+  const { user } = useUser();
 
   const handleQuantityChange = (id: string, quantity: number) => {
     dispatch({ type: 'UPDATE_QUANTITY', payload: { id, quantity } });
@@ -115,6 +116,15 @@ export default function ShoppingCartSheet() {
 
   const handleGuestCheckout = () => {
     initiateAnonymousSignIn(auth);
+  };
+
+  const handleCheckout = () => {
+    // This is where you would navigate to a checkout page, e.g. /checkout
+    // For this demo, we'll just show a toast.
+    toast({
+      title: 'Proceeding to Checkout',
+      description: 'This is where the magic would happen!',
+    });
   };
 
   return (
@@ -282,7 +292,13 @@ export default function ShoppingCartSheet() {
               You saved ${discount.toFixed(2)}!
             </p>
           )}
-          <CheckoutDialog onGuestCheckout={handleGuestCheckout} />
+          {user ? (
+            <Button size="lg" className="w-full text-lg" onClick={handleCheckout}>
+              Proceed to Checkout <ArrowRight className="ml-2 h-5 w-5" />
+            </Button>
+          ) : (
+            <CheckoutDialog onGuestCheckout={handleGuestCheckout} />
+          )}
         </div>
       )}
     </div>
@@ -308,10 +324,10 @@ const CheckoutDialog = ({ onGuestCheckout }: { onGuestCheckout: () => void }) =>
         </AlertDialogDescription>
       </AlertDialogHeader>
       <AlertDialogFooter className="grid grid-cols-2 gap-4">
-        <AlertDialogCancel onClick={onGuestCheckout}>Continue as Guest</AlertDialogCancel>
         <AlertDialogAction asChild>
           <Link href="/login">Create My Account</Link>
         </AlertDialogAction>
+        <AlertDialogCancel onClick={onGuestCheckout}>Continue as Guest</AlertDialogCancel>
       </AlertDialogFooter>
     </AlertDialogContent>
   </AlertDialog>
