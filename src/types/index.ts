@@ -15,6 +15,9 @@ export type Product = {
   expirationDays: number;
   imageUrl: string;
   imageHint: string;
+  couponEligible?: boolean;
+  onSale?: boolean;
+  snapEligible?: boolean;
 };
 
 export const getProductImage = (

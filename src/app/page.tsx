@@ -1,4 +1,6 @@
+'use client';
 import Image from 'next/image';
+import React, { useState, useMemo } from 'react';
 import {
   Card,
   CardContent,
@@ -8,34 +10,54 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Search, ShoppingCart, Tag } from 'lucide-react';
+import { Search, ShoppingCart, Tag, Filter } from 'lucide-react';
 import { products, coupons, newArrivals } from '@/lib/data';
 import AppHeader from '@/components/app-header';
 import ProductCard from '@/components/product-card';
 import AppFooter from '@/components/app-footer';
 import RepeatOrderSuggestion from '@/components/ai/repeat-order-suggestion';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Label } from '@/components/ui/label';
 
 export default function Home() {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filters, setFilters] = useState({
+    highRating: false,
+    couponEligible: false,
+    onSale: false,
+    snapEligible: false,
+  });
+
+  const handleFilterChange = (filterName: keyof typeof filters) => {
+    setFilters((prev) => ({ ...prev, [filterName]: !prev[filterName] }));
+  };
+
+  const filteredProducts = useMemo(() => {
+    return products
+      .filter((product) =>
+        product.name.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+      .filter((product) => {
+        if (filters.highRating && product.rating < 4.5) return false;
+        if (filters.couponEligible && !product.couponEligible) return false;
+        if (filters.onSale && !product.onSale) return false;
+        if (filters.snapEligible && !product.snapEligible) return false;
+        return true;
+      });
+  }, [searchTerm, filters]);
+
   return (
     <div className="flex flex-col min-h-screen">
       <AppHeader />
       <main className="flex-1">
         <div className="container mx-auto px-4 py-8">
-          <div className="space-y-8">
-            <RepeatOrderSuggestion />
-            <div className="relative">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground h-5 w-5" />
-              <Input
-                placeholder="Search for products..."
-                className="pl-12 h-12 text-lg"
-              />
-            </div>
-          </div>
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mt-8">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
             <aside className="lg:col-span-3 space-y-8">
-              <Card>
+              <Card className="bg-transparent border-0 shadow-none">
                 <CardHeader>
-                  <CardTitle className="font-headline">New Arrivals</CardTitle>
+                  <CardTitle className="font-headline text-2xl text-primary">
+                    New Arrivals
+                  </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   {newArrivals.map((item) => (
@@ -58,20 +80,10 @@ export default function Home() {
                   ))}
                 </CardContent>
               </Card>
-            </aside>
 
-            <section className="lg:col-span-6 space-y-8">
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-2 gap-6">
-                {products.map((product) => (
-                  <ProductCard key={product.id} product={product} />
-                ))}
-              </div>
-            </section>
-
-            <aside className="lg:col-span-3 space-y-8">
-              <Card>
+              <Card className="bg-transparent border-0 shadow-none">
                 <CardHeader>
-                  <CardTitle className="font-headline">
+                  <CardTitle className="font-headline text-2xl text-primary">
                     Sales & Coupons
                   </CardTitle>
                 </CardHeader>
@@ -81,7 +93,7 @@ export default function Home() {
                       key={coupon.code}
                       className="flex items-center gap-4 p-3 rounded-lg border bg-card"
                     >
-                      <Tag className="text-primary w-8 h-8" />
+                      <Tag className="text-accent w-8 h-8" />
                       <div>
                         <p className="font-bold">{coupon.title}</p>
                         <p className="text-sm text-muted-foreground">
@@ -93,6 +105,51 @@ export default function Home() {
                 </CardContent>
               </Card>
             </aside>
+
+            <section className="lg:col-span-9 space-y-8">
+              <RepeatOrderSuggestion />
+              <div className="space-y-4">
+                <div className="relative">
+                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground h-5 w-5" />
+                  <Input
+                    placeholder="Search for products..."
+                    className="pl-12 h-12 text-lg"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
+                </div>
+                <Card className="p-4">
+                  <div className="flex items-center gap-4 flex-wrap">
+                    <div className="flex items-center gap-2">
+                       <Filter className="h-5 w-5 text-muted-foreground" />
+                       <h3 className="text-md font-semibold">Filters:</h3>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Checkbox id="highRating" checked={filters.highRating} onCheckedChange={() => handleFilterChange('highRating')} />
+                      <Label htmlFor="highRating">High Rating</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Checkbox id="couponEligible" checked={filters.couponEligible} onCheckedChange={() => handleFilterChange('couponEligible')} />
+                      <Label htmlFor="couponEligible">Coupon Eligible</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Checkbox id="onSale" checked={filters.onSale} onCheckedChange={() => handleFilterChange('onSale')} />
+                      <Label htmlFor="onSale">On Sale</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Checkbox id="snapEligible" checked={filters.snapEligible} onCheckedChange={() => handleFilterChange('snapEligible')} />
+                      <Label htmlFor="snapEligible">SNAP Eligible</Label>
+                    </div>
+                  </div>
+                </Card>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+                {filteredProducts.map((product) => (
+                  <ProductCard key={product.id} product={product} />
+                ))}
+              </div>
+            </section>
           </div>
         </div>
       </main>

@@ -11,10 +11,11 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Button } from './ui/button';
-import { Calendar, Plus } from 'lucide-react';
+import { Calendar, Plus, Tag } from 'lucide-react';
 import { useCart } from '@/context/cart-context';
 import StarRating from './star-rating';
 import { Badge } from './ui/badge';
+import { addDays, format } from 'date-fns';
 
 interface ProductCardProps {
   product: Product;
@@ -22,11 +23,12 @@ interface ProductCardProps {
 
 export default function ProductCard({ product }: ProductCardProps) {
   const { addToCart } = useCart();
+  const expirationDate = addDays(new Date(), product.expirationDays);
 
   return (
-    <Card className="flex flex-col overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300">
-      <CardHeader className="p-0">
-        <div className="aspect-square relative">
+    <Card className="flex flex-col overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300 bg-card">
+      <CardHeader className="p-0 relative">
+        <div className="aspect-video relative">
           <Image
             src={product.imageUrl}
             alt={product.name}
@@ -35,6 +37,15 @@ export default function ProductCard({ product }: ProductCardProps) {
             data-ai-hint={product.imageHint}
           />
         </div>
+        {product.couponEligible && (
+          <Badge
+            variant="default"
+            className="absolute top-2 right-2 bg-accent text-accent-foreground"
+          >
+            <Tag className="mr-1.5 h-3.5 w-3.5" />
+            Coupon
+          </Badge>
+        )}
       </CardHeader>
       <CardContent className="p-4 flex-1 flex flex-col">
         <CardTitle className="text-lg font-headline leading-tight mb-1">
@@ -44,10 +55,10 @@ export default function ProductCard({ product }: ProductCardProps) {
           <StarRating rating={product.rating} />
           <div className="flex items-center gap-1.5">
             <Calendar className="w-4 h-4" />
-            <span>Expires in {product.expirationDays} days</span>
+            <span>Expires {format(expirationDate, 'MMM d, yyyy')}</span>
           </div>
         </div>
-        <CardDescription className="flex-1 text-base">
+        <CardDescription className="flex-1 text-base font-bold text-foreground">
           ${product.price.toFixed(2)}
         </CardDescription>
       </CardContent>

@@ -8,6 +8,9 @@ const productData: Omit<Product, 'imageUrl' | 'imageHint'>[] = [
     price: 1.25,
     rating: 5,
     expirationDays: 5,
+    couponEligible: true,
+    onSale: false,
+    snapEligible: true,
   },
   {
     id: 'prod_2',
@@ -15,6 +18,8 @@ const productData: Omit<Product, 'imageUrl' | 'imageHint'>[] = [
     price: 3.5,
     rating: 4,
     expirationDays: 10,
+    onSale: true,
+    snapEligible: true,
   },
   {
     id: 'prod_3',
@@ -22,13 +27,16 @@ const productData: Omit<Product, 'imageUrl' | 'imageHint'>[] = [
     price: 4.99,
     rating: 5,
     expirationDays: 7,
+    couponEligible: true,
+    snapEligible: false,
   },
   {
     id: 'prod_4',
     name: 'Crisp Red Apples',
     price: 2.99,
-    rating: 4,
+    rating: 4.6,
     expirationDays: 14,
+    snapEligible: true,
   },
   {
     id: 'prod_5',
@@ -36,13 +44,16 @@ const productData: Omit<Product, 'imageUrl' | 'imageHint'>[] = [
     price: 8.75,
     rating: 5,
     expirationDays: 4,
+    onSale: true,
+    couponEligible: true,
   },
   {
     id: 'prod_6',
     name: 'Romaine Lettuce',
     price: 2.5,
-    rating: 3,
+    rating: 3.8,
     expirationDays: 8,
+    snapEligible: true,
   },
 ];
 
