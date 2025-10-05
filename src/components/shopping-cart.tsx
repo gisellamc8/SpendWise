@@ -10,7 +10,6 @@ import {
   ShoppingCart,
   Trash2,
   Tag,
-  Sparkles,
 } from 'lucide-react';
 import {
   AlertDialog,
@@ -34,7 +33,7 @@ import { cn } from '@/lib/utils';
 
 export default function ShoppingCartSheet() {
   const { state, dispatch, subtotal, discount, total } = useCart();
-  const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
+  const [selectedCoupons, setSelectedCoupons] = useState<Coupon[]>([]);
   const { toast } = useToast();
 
   const handleQuantityChange = (id: string, quantity: number) => {
@@ -71,28 +70,16 @@ export default function ShoppingCartSheet() {
     });
   }, [state.items]);
 
-  const applyBestCoupon = () => {
-    if (eligibleCoupons.length > 0) {
-      // Simple logic: apply the first eligible coupon
-      const bestCoupon = eligibleCoupons[0];
-      handleCouponSelect(bestCoupon);
-    } else {
-      toast({
-        variant: 'destructive',
-        title: 'No eligible coupons',
-        description: 'Your cart does not qualify for any available coupons.',
-      });
-    }
-  };
-
   const handleCouponSelect = (coupon: Coupon) => {
-    if (selectedCoupon?.code === coupon.code) {
-      setSelectedCoupon(null);
-      dispatch({ type: 'APPLY_COUPON', payload: null });
+    dispatch({ type: 'TOGGLE_COUPON', payload: coupon });
+    if (state.appliedCoupons.some((c) => c.code === coupon.code)) {
+       toast({
+        variant: 'destructive',
+        title: 'Coupon Removed!',
+        description: `${coupon.title}`,
+      });
     } else {
-      setSelectedCoupon(coupon);
-      dispatch({ type: 'APPLY_COUPON', payload: coupon });
-      toast({
+       toast({
         title: 'Coupon Applied!',
         description: `${coupon.title}`,
       });
@@ -110,7 +97,7 @@ export default function ShoppingCartSheet() {
                 eligibleCoupons.map((coupon) => (
                   <Badge
                     key={coupon.code}
-                    variant={selectedCoupon?.code === coupon.code ? 'default' : 'outline'}
+                    variant={state.appliedCoupons.some(c => c.code === coupon.code) ? 'default' : 'outline'}
                     className={cn('cursor-pointer flex gap-1.5 items-center')}
                     onClick={() => handleCouponSelect(coupon)}
                   >

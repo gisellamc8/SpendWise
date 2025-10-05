@@ -13,7 +13,7 @@ import { useToast } from '@/hooks/use-toast';
 
 type CartState = {
   items: CartItem[];
-  appliedCoupon: Coupon | null;
+  appliedCoupons: Coupon[];
 };
 
 type CartAction =
@@ -21,7 +21,7 @@ type CartAction =
   | { type: 'REMOVE_ITEM'; payload: { id: string } }
   | { type: 'UPDATE_QUANTITY'; payload: { id: string; quantity: number } }
   | { type: 'CLEAR_CART' }
-  | { type: 'APPLY_COUPON'; payload: Coupon | null };
+  | { type: 'TOGGLE_COUPON'; payload: Coupon };
 
 const CartContext = createContext<
   | {
@@ -77,11 +77,22 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
         ),
       };
     }
-    case 'APPLY_COUPON': {
-      return { ...state, appliedCoupon: action.payload };
+    case 'TOGGLE_COUPON': {
+      const isApplied = state.appliedCoupons.some(c => c.code === action.payload.code);
+      if (isApplied) {
+        return {
+          ...state,
+          appliedCoupons: state.appliedCoupons.filter(c => c.code !== action.payload.code),
+        };
+      } else {
+        return {
+          ...state,
+          appliedCoupons: [...state.appliedCoupons, action.payload],
+        };
+      }
     }
     case 'CLEAR_CART':
-      return { ...state, items: [], appliedCoupon: null };
+      return { ...state, items: [], appliedCoupons: [] };
     default:
       return state;
   }
@@ -90,7 +101,7 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
 export const CartProvider = ({ children }: { children: ReactNode }) => {
   const [state, dispatch] = useReducer(cartReducer, {
     items: [],
-    appliedCoupon: null,
+    appliedCoupons: [],
   });
   const { toast } = useToast();
 
@@ -115,33 +126,37 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   }, [state.items]);
 
   const discount = useMemo(() => {
-    if (!state.appliedCoupon) return 0;
+    if (state.appliedCoupons.length === 0) return 0;
 
-    let applicableValue = subtotal;
+    return state.appliedCoupons.reduce((totalDiscount, coupon) => {
+        let applicableValue = subtotal;
 
-    if (state.appliedCoupon.eligible_item_names || state.appliedCoupon.eligible_brands) {
-      applicableValue = state.items.reduce((total, item) => {
-        const isEligible = 
-          state.appliedCoupon?.eligible_item_names?.includes(item.product.name) ||
-          state.appliedCoupon?.eligible_brands?.includes(item.product.brand);
-        
-        if (isEligible) {
-          return total + item.product.price * item.quantity;
+        if (coupon.eligible_item_names || coupon.eligible_brands) {
+        applicableValue = state.items.reduce((total, item) => {
+            const isEligible = 
+            coupon.eligible_item_names?.includes(item.product.name) ||
+            coupon.eligible_brands?.includes(item.product.brand);
+            
+            if (isEligible) {
+            return total + item.product.price * item.quantity;
+            }
+            return total;
+        }, 0);
         }
-        return total;
-      }, 0);
-    }
-    
-    if (state.appliedCoupon.discountType === 'percentage') {
-      return applicableValue * state.appliedCoupon.discountValue;
-    }
-    if (state.appliedCoupon.discountType === 'fixed') {
-      return Math.min(applicableValue, state.appliedCoupon.discountValue);
-    }
-    return 0;
-  }, [state.items, state.appliedCoupon, subtotal]);
+        
+        let currentCouponDiscount = 0;
+        if (coupon.discountType === 'percentage') {
+            currentCouponDiscount = applicableValue * coupon.discountValue;
+        } else if (coupon.discountType === 'fixed') {
+            currentCouponDiscount = Math.min(applicableValue, coupon.discountValue);
+        }
+        
+        return totalDiscount + currentCouponDiscount;
+    }, 0);
 
-  const total = useMemo(() => subtotal - discount, [subtotal, discount]);
+  }, [state.items, state.appliedCoupons, subtotal]);
+
+  const total = useMemo(() => Math.max(0, subtotal - discount), [subtotal, discount]);
 
 
   return (
