@@ -1,6 +1,6 @@
 'use client';
 import Image from 'next/image';
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import {
   Card,
   CardContent,
@@ -36,9 +36,9 @@ export default function Home() {
   });
   const [ratingFilter, setRatingFilter] = useState(0);
 
-  const handleFilterChange = (filterName: keyof typeof filters) => {
+  const handleFilterChange = useCallback((filterName: keyof typeof filters) => {
     setFilters((prev) => ({ ...prev, [filterName]: !prev[filterName] }));
-  };
+  }, []);
 
   const filteredProducts = useMemo(() => {
     return products
