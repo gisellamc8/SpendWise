@@ -169,3 +169,42 @@ const rawProductData = [
   { brand: 'Cape Gourmet', item_name: 'Coffee Beans', price: 14.11, aisle: 9, shelf: 'middle', calories: 5, nutrition: 'Protein: 0g; Fat: 0g; Carbs: 1g', stock: 26, sustainability: 0.54, expiration_date: '2026-07-31' },
   { brand: 'Cape Gourmet', item_name: 'Butter', price: 3.97, aisle: 18, shelf: 'top', calories: 100, nutrition: 'Protein: 1g; Fat: 11g; Carbs: 0g', stock: 12, sustainability: 0.36, expiration_date: '2025-11-12' },
   { brand: 'Cape Gourmet', item_name: 'Frozen Pizza', price: 9.07, aisle: 5, shelf: 'top', calories: 300, nutrition: 'Protein: 12g; Fat: 14g; Carbs: 33g', stock: 8, sustainability: 0.49, expiration_date: '2025-11-30' },
+];
+
+export const products = processProductData(rawProductData);
+
+export const coupons: Coupon[] = [
+  {
+    code: 'SAVE10',
+    title: '10% Off Your Next Order',
+    description: 'Valid for all products. One-time use.',
+  },
+  {
+    code: 'FRESHFINDS',
+    title: 'Buy One Get One Free on Salads',
+    description: 'Applies to all pre-packaged salads.',
+  },
+  {
+    code: 'SWEETDEAL',
+    title: '$2 Off Ice Cream',
+    description: 'Valid on any brand of ice cream.',
+  },
+];
+
+export const notifications: Notification[] = [
+  {
+    id: '1',
+    title: 'Milk expiring soon!',
+    description: 'Your milk in the fridge is set to expire in 3 days.',
+    date: new Date(Date.now() - 1000 * 60 * 60 * 24),
+  },
+  {
+    id: '2',
+    title: 'Weekly Flyer Available',
+    description: 'Check out this week\'s deals and save big!',
+    date: new Date(Date.now() - 1000 * 60 * 60 * 48),
+  },
+];
+
+export const newArrivals = products.slice(0, 3);
+export const previousOrderItems = products.slice(3, 8);
