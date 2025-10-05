@@ -75,7 +75,7 @@ export const processProductData = (data: any[]): Product[] => {
       stock: p.stock,
       sustainability: p.sustainability,
       expirationDate: expirationDate,
-      rating: Math.floor(Math.random() * 5) + 1,
+      rating: p.rating,
       expirationDays: differenceInDays(expirationDate, new Date()),
       imageUrl: url,
       imageHint: hint,
@@ -86,3 +86,4 @@ export const processProductData = (data: any[]): Product[] => {
   });
 };
 
+    
