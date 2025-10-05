@@ -1,3 +1,4 @@
+
 import placeholderData from '@/lib/placeholder-images.json';
 import { differenceInDays } from 'date-fns';
 
@@ -39,6 +40,8 @@ export type Coupon = {
   code: string;
   title: string;
   description: string;
+  eligible_brands?: string[];
+  eligible_item_names?: string[];
 };
 
 export type Notification = {

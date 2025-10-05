@@ -1,10 +1,11 @@
+
 'use client';
 
 import Image from 'next/image';
 import { useCart } from '@/context/cart-context';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Minus, Plus, ShoppingCart, Trash2, X } from 'lucide-react';
+import { Minus, Plus, ShoppingCart, Trash2, X, Sparkles } from 'lucide-react';
 import {
   Card,
   CardContent,
@@ -35,9 +36,14 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Label } from './ui/label';
+import { useMemo, useState } from 'react';
+import { Coupon } from '@/types';
+import { useToast } from '@/hooks/use-toast';
 
 export default function ShoppingCartSheet() {
   const { state, dispatch, totalItems, totalPrice } = useCart();
+  const [selectedCoupon, setSelectedCoupon] = useState<string>('');
+  const { toast } = useToast();
 
   const handleQuantityChange = (id: string, quantity: number) => {
     dispatch({ type: 'UPDATE_QUANTITY', payload: { id, quantity } });
@@ -47,28 +53,93 @@ export default function ShoppingCartSheet() {
     dispatch({ type: 'REMOVE_ITEM', payload: { id } });
   };
 
+  const eligibleCoupons = useMemo(() => {
+    const cartBrands = new Set(state.items.map((item) => item.product.brand));
+    const cartItemNames = new Set(
+      state.items.map((item) => item.product.name)
+    );
+
+    return coupons.filter((coupon) => {
+      if (!coupon.eligible_brands && !coupon.eligible_item_names) {
+        return true; // Coupon is generic
+      }
+      if (
+        coupon.eligible_brands &&
+        coupon.eligible_brands.some((brand) => cartBrands.has(brand))
+      ) {
+        return true;
+      }
+      if (
+        coupon.eligible_item_names &&
+        coupon.eligible_item_names.some((name) => cartItemNames.has(name))
+      ) {
+        return true;
+      }
+      return false;
+    });
+  }, [state.items]);
+
+  const applyBestCoupon = () => {
+    if (eligibleCoupons.length > 0) {
+      // Simple logic: apply the first eligible coupon
+      const bestCoupon = eligibleCoupons[0];
+      setSelectedCoupon(bestCoupon.code);
+      toast({
+        title: 'Coupon Applied!',
+        description: `${bestCoupon.title}`,
+      });
+    } else {
+      toast({
+        variant: 'destructive',
+        title: 'No eligible coupons',
+        description: 'Your cart does not qualify for any available coupons.',
+      });
+    }
+  };
+
   return (
     <div className="h-full flex flex-col">
       <div className="relative mt-4">
         <div className="grid w-full max-w-sm items-center gap-1.5">
           <Label htmlFor="coupon">Apply a Coupon</Label>
-          <Select>
-            <SelectTrigger id="coupon" className="w-full">
-              <SelectValue placeholder="Select a coupon" />
-            </SelectTrigger>
-            <SelectContent>
-              {coupons.map((coupon) => (
-                <SelectItem key={coupon.code} value={coupon.code}>
-                  <div className="flex flex-col">
-                    <p className="font-semibold">{coupon.title}</p>
-                    <p className="text-xs text-muted-foreground">
-                      {coupon.description}
-                    </p>
+          <div className="flex gap-2">
+            <Select
+              value={selectedCoupon}
+              onValueChange={setSelectedCoupon}
+              disabled={eligibleCoupons.length === 0}
+            >
+              <SelectTrigger id="coupon" className="w-full">
+                <SelectValue placeholder="Select an eligible coupon" />
+              </SelectTrigger>
+              <SelectContent>
+                {eligibleCoupons.length > 0 ? (
+                  eligibleCoupons.map((coupon) => (
+                    <SelectItem key={coupon.code} value={coupon.code}>
+                      <div className="flex flex-col">
+                        <p className="font-semibold">{coupon.title}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {coupon.description}
+                        </p>
+                      </div>
+                    </SelectItem>
+                  ))
+                ) : (
+                  <div className="p-4 text-center text-sm text-muted-foreground">
+                    No eligible coupons for your current items.
                   </div>
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+                )}
+              </SelectContent>
+            </Select>
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={applyBestCoupon}
+              aria-label="Apply Best Coupon"
+              disabled={eligibleCoupons.length === 0}
+            >
+              <Sparkles className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
       </div>
       <ScrollArea className="flex-1 my-4 pr-4">

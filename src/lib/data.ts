@@ -1,3 +1,4 @@
+
 import { Product, Coupon, Notification, processProductData } from '@/types';
 
 const rawProductData = [
@@ -183,11 +184,28 @@ export const coupons: Coupon[] = [
     code: 'FRESHFINDS',
     title: 'Buy One Get One Free on Salads',
     description: 'Applies to all pre-packaged salads.',
+    eligible_item_names: ['Salad Mix'],
   },
   {
     code: 'SWEETDEAL',
     title: '$2 Off Ice Cream',
     description: 'Valid on any brand of ice cream.',
+    eligible_item_names: ['Low Fat Ice Cream Sandwiches'],
+  },
+  {
+    code: 'PANTRY',
+    title: '15% Off Wholesome Pantry',
+    description: 'Get 15% off all Wholesome Pantry brand items.',
+    eligible_brands: ['Wholesome Pantry'],
+  },
+  {
+    code: 'HEALTHY',
+    title: '$5 off Organic Items',
+    description: 'Save $5 when you buy 2 or more organic items.',
+    eligible_item_names: [
+      'Organic Chipotle Veggie Burgers',
+      'Organic Eggs',
+    ],
   },
 ];
 
