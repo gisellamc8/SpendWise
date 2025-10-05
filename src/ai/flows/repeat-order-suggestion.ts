@@ -44,17 +44,13 @@ const prompt = ai.definePrompt({
   prompt: `You are a helpful shopping assistant. A user has the following purchase history:
 
 Has previous order: {{hasPreviousOrder}}
-{% if hasPreviousOrder %}
+{{#if hasPreviousOrder}}
 Previous order items: {{#each previousOrderItems}}{{{this}}}, {{/each}}
-{% endif %}
+{{/if}}
 
 Based on this purchase history, determine whether to suggest repeating the previous order. Consider factors like whether the user has a previous order and what was in it.
 
-Output in JSON format:
-{
-  "shouldSuggestRepeatOrder": boolean, // true if you should suggest repeating the order, false otherwise
-  "suggestionReason": string // A short explanation of why you are or are not suggesting the repeat order.
-}
+Output in JSON format.
 `,
 });
 
