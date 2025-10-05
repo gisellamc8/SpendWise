@@ -217,6 +217,30 @@ export const coupons: Coupon[] = [
     discountValue: 5,
     discountType: 'fixed',
   },
+  {
+    code: 'BB20',
+    title: '20% Off Bowl & Basket',
+    description: '20% off all Bowl & Basket brand products.',
+    eligible_brands: ['Bowl & Basket'],
+    discountValue: 0.2,
+    discountType: 'percentage',
+  },
+  {
+    code: 'PIZZA5',
+    title: '$5 Off Any Pizza',
+    description: 'Save $5 on any frozen pizza.',
+    eligible_item_names: ['Frozen Pizza'],
+    discountValue: 5,
+    discountType: 'fixed',
+  },
+  {
+    code: 'DELI3',
+    title: '$3 Off Deli Meat',
+    description: 'Save $3 on any deli meat purchase.',
+    eligible_item_names: ['Deli Roast Beef'],
+    discountValue: 3,
+    discountType: 'fixed',
+  },
 ];
 
 export const notifications: Notification[] = [
