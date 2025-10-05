@@ -3,7 +3,7 @@ import placeholderData from '@/lib/placeholder-images.json';
 import { differenceInDays } from 'date-fns';
 
 const imageMap = new Map(
-  placeholderData.placeholderImages.map((img) => [
+  placeholderData.map((img) => [
     img.id,
     { url: img.imageUrl, hint: img.imageHint },
   ])
@@ -60,7 +60,7 @@ export type CartItem = {
 
 export const processProductData = (data: any[]): Product[] => {
   return data.map((p, index) => {
-    const id = `prod_${index + 1}`;
+    const id = `prod_${p.brand.replace(/\s+/g, '-')}_${index + 1}`;
     const { url, hint } = getProductImage(id);
     const expirationDate = new Date(p.expiration_date);
     return {
@@ -85,5 +85,3 @@ export const processProductData = (data: any[]): Product[] => {
     };
   });
 };
-
-    
