@@ -26,6 +26,15 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { ScrollArea } from './ui/scroll-area';
+import { coupons } from '@/lib/data';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Label } from './ui/label';
 
 export default function ShoppingCartSheet() {
   const { state, dispatch, totalItems, totalPrice } = useCart();
@@ -41,9 +50,26 @@ export default function ShoppingCartSheet() {
   return (
     <div className="h-full flex flex-col">
       <div className="relative mt-4">
-        <p className="text-xs text-muted-foreground text-center bg-card p-2 rounded-md border border-dashed">
-          The Coupon field is unintrusive.
-        </p>
+        <div className="grid w-full max-w-sm items-center gap-1.5">
+          <Label htmlFor="coupon">Apply a Coupon</Label>
+          <Select>
+            <SelectTrigger id="coupon" className="w-full">
+              <SelectValue placeholder="Select a coupon" />
+            </SelectTrigger>
+            <SelectContent>
+              {coupons.map((coupon) => (
+                <SelectItem key={coupon.code} value={coupon.code}>
+                  <div className="flex flex-col">
+                    <p className="font-semibold">{coupon.title}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {coupon.description}
+                    </p>
+                  </div>
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
       </div>
       <ScrollArea className="flex-1 my-4 pr-4">
         <div className="space-y-4">
