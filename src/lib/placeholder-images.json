@@ -1,3 +1,40 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "prod_1",
+      "description": "A bunch of fresh organic bananas.",
+      "imageUrl": "https://images.unsplash.com/photo-1647632250951-931b4c6f3b0d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxvcmdhbmljJTIwYmFuYW5hc3xlbnwwfHx8fDE3NTk1MzU1NDR8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "organic bananas"
+    },
+    {
+      "id": "prod_2",
+      "description": "A carton of fresh whole milk.",
+      "imageUrl": "https://images.unsplash.com/photo-1660376026047-710fd6a1c849?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHx3aG9sZSUyMG1pbGt8ZW58MHx8fHwxNzU5NjQ2MzQ2fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "whole milk"
+    },
+    {
+      "id": "prod_3",
+      "description": "A loaf of freshly baked sourdough bread.",
+      "imageUrl": "https://images.unsplash.com/photo-1620921586333-b7566c34550a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8c291cmRvdWdoJTIwYnJlYWR8ZW58MHx8fHwxNzU5NjMxODA0fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "sourdough bread"
+    },
+    {
+      "id": "prod_4",
+      "description": "A bag of crisp red apples.",
+      "imageUrl": "https://images.unsplash.com/photo-1644440533689-3033ab8ae060?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxyZWQlMjBhcHBsZXN8ZW58MHx8fHwxNzU5NjEzNDQzfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "red apples"
+    },
+    {
+      "id": "prod_5",
+      "description": "Free-range chicken breasts.",
+      "imageUrl": "https://images.unsplash.com/photo-1642689690500-f429a042cad1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8Y2hpY2tlbiUyMGJyZWFzdHxlbnwwfHx8fDE3NTk2NDYzNDZ8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "chicken breast"
+    },
+    {
+      "id": "prod_6",
+      "description": "A head of fresh romaine lettuce.",
+      "imageUrl": "https://images.unsplash.com/photo-1620745799892-2132a65f4295?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxyb21haW5lJTIwbGV0dHVjZXxlbnwwfHx8fDE3NTk1MjM1MTl8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "romaine lettuce"
+    }
+  ]
 }
