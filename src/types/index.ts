@@ -1,6 +1,6 @@
 
 import placeholderData from '@/lib/placeholder-images.json';
-import { differenceInDays } from 'date-fns';
+import { differenceInDays, parseISO } from 'date-fns';
 
 const imageMap = new Map(
   placeholderData.placeholderImages.map((img) => [
@@ -62,7 +62,7 @@ export const processProductData = (data: any[]): Product[] => {
   return data.map((p, index) => {
     const id = `prod_${p.brand.replace(/\s+/g, '-')}_${index + 1}`;
     const { url, hint } = getProductImage(id);
-    const expirationDate = new Date(p.expiration_date);
+    const expirationDate = parseISO(p.expiration_date);
     return {
       id: id,
       brand: p.brand,

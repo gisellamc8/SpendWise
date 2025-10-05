@@ -1,3 +1,4 @@
+
 'use client';
 
 import Image from 'next/image';
@@ -15,7 +16,8 @@ import { Calendar, Plus, Tag } from 'lucide-react';
 import { useCart } from '@/context/cart-context';
 import StarRating from './star-rating';
 import { Badge } from './ui/badge';
-import { format } from 'date-fns';
+import { format, formatInTimeZone } from 'date-fns-tz';
+
 
 interface ProductCardProps {
   product: Product;
@@ -64,7 +66,7 @@ export default function ProductCard({ product }: ProductCardProps) {
           <StarRating rating={product.rating} />
           <div className="flex items-center gap-1.5">
             <Calendar className="w-4 h-4" />
-            <span>Expires {format(product.expirationDate, 'MMM d, yyyy')}</span>
+            <span>Expires {formatInTimeZone(product.expirationDate, 'UTC', 'MMM d, yyyy')}</span>
           </div>
         </div>
         <CardDescription className="flex-1 text-base font-bold text-foreground">
