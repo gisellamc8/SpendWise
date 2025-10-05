@@ -27,7 +27,7 @@ import {
 import { ScrollArea } from './ui/scroll-area';
 import { coupons } from '@/lib/data';
 import { Label } from './ui/label';
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { Coupon } from '@/types';
 import { useToast } from '@/hooks/use-toast';
 import { Badge } from './ui/badge';
@@ -196,16 +196,23 @@ export default function ShoppingCartSheet() {
               <span className="text-muted-foreground">Subtotal</span>
               <span>${subtotal.toFixed(2)}</span>
             </div>
+            {discount > 0 && (
             <div className="flex justify-between">
               <span className="text-muted-foreground">Discount</span>
               <span className="text-green-600">-${discount.toFixed(2)}</span>
             </div>
+            )}
           </div>
           <Separator />
           <div className="flex justify-between font-bold text-lg mb-4">
             <span>Total</span>
             <span>${total.toFixed(2)}</span>
           </div>
+           {discount > 0 && (
+            <p className="text-sm text-green-600 font-semibold text-center">
+              You saved ${discount.toFixed(2)}!
+            </p>
+          )}
           <CheckoutDialog />
         </div>
       )}
@@ -238,5 +245,3 @@ const CheckoutDialog = () => (
     </AlertDialogContent>
   </AlertDialog>
 );
-
-    
