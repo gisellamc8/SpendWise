@@ -36,6 +36,7 @@ import { cn } from '@/lib/utils';
 import { Separator } from './ui/separator';
 import Link from 'next/link';
 import { useAuth, initiateAnonymousSignIn, useUser } from '@/firebase';
+import { useRouter } from 'next/navigation';
 
 
 export default function ShoppingCartSheet() {
@@ -43,6 +44,7 @@ export default function ShoppingCartSheet() {
   const { toast } = useToast();
   const auth = useAuth();
   const { user } = useUser();
+  const router = useRouter();
 
   const handleQuantityChange = (id: string, quantity: number) => {
     dispatch({ type: 'UPDATE_QUANTITY', payload: { id, quantity } });
@@ -119,12 +121,7 @@ export default function ShoppingCartSheet() {
   };
 
   const handleCheckout = () => {
-    // This is where you would navigate to a checkout page, e.g. /checkout
-    // For this demo, we'll just show a toast.
-    toast({
-      title: 'Proceeding to Checkout',
-      description: 'This is where the magic would happen!',
-    });
+    router.push('/checkout');
   };
 
   return (
