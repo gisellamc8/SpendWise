@@ -10,6 +10,8 @@ import {
   ShoppingCart,
   Trash2,
   Tag,
+  ArrowRight,
+  CreditCard,
 } from 'lucide-react';
 import {
   AlertDialog,
@@ -30,10 +32,10 @@ import { Coupon } from '@/types';
 import { useToast } from '@/hooks/use-toast';
 import { Badge } from './ui/badge';
 import { cn } from '@/lib/utils';
+import { Separator } from './ui/separator';
 
 export default function ShoppingCartSheet() {
   const { state, dispatch, subtotal, discount, total } = useCart();
-  const [selectedCoupons, setSelectedCoupons] = useState<Coupon[]>([]);
   const { toast } = useToast();
 
   const handleQuantityChange = (id: string, quantity: number) => {
@@ -73,13 +75,13 @@ export default function ShoppingCartSheet() {
   const handleCouponSelect = (coupon: Coupon) => {
     dispatch({ type: 'TOGGLE_COUPON', payload: coupon });
     if (state.appliedCoupons.some((c) => c.code === coupon.code)) {
-       toast({
+      toast({
         variant: 'destructive',
         title: 'Coupon Removed!',
         description: `${coupon.title}`,
       });
     } else {
-       toast({
+      toast({
         title: 'Coupon Applied!',
         description: `${coupon.title}`,
       });
@@ -88,34 +90,45 @@ export default function ShoppingCartSheet() {
 
   return (
     <div className="h-full flex flex-col">
-      <div className="relative mt-4">
-        <div className="grid w-full items-center gap-1.5">
-          <Label htmlFor="coupon">Apply a Coupon</Label>
-          <div className="flex gap-2 items-center">
-            <div className="flex-1 flex gap-2 flex-wrap">
-              {eligibleCoupons.length > 0 ? (
-                eligibleCoupons.map((coupon) => (
-                  <Badge
-                    key={coupon.code}
-                    variant={state.appliedCoupons.some(c => c.code === coupon.code) ? 'default' : 'outline'}
-                    className={cn('cursor-pointer flex gap-1.5 items-center')}
-                    onClick={() => handleCouponSelect(coupon)}
-                  >
-                    <Tag className="h-3 w-3" />
-                    {coupon.title}
-                  </Badge>
-                ))
-              ) : (
-                <p className="text-xs text-muted-foreground p-2">
-                  No coupons available for your current items.
-                </p>
-              )}
+      {state.items.length > 0 && (
+        <div className="relative mt-4">
+          <div className="grid w-full items-center gap-2">
+            <Label htmlFor="coupon" className="font-semibold">
+              Available Coupons
+            </Label>
+            <div className="flex gap-2 items-center">
+              <div className="flex-1 flex gap-2 flex-wrap">
+                {eligibleCoupons.length > 0 ? (
+                  eligibleCoupons.map((coupon) => (
+                    <Badge
+                      key={coupon.code}
+                      variant={
+                        state.appliedCoupons.some(
+                          (c) => c.code === coupon.code
+                        )
+                          ? 'default'
+                          : 'outline'
+                      }
+                      className={cn('cursor-pointer flex gap-1.5 items-center')}
+                      onClick={() => handleCouponSelect(coupon)}
+                    >
+                      <Tag className="h-3 w-3" />
+                      {coupon.title}
+                    </Badge>
+                  ))
+                ) : (
+                  <p className="text-xs text-muted-foreground p-2">
+                    No coupons available for your current items.
+                  </p>
+                )}
+              </div>
             </div>
           </div>
         </div>
-      </div>
-      <ScrollArea className="flex-1 my-4 pr-4">
-        <div className="space-y-4">
+      )}
+      <Separator className="my-4" />
+      <ScrollArea className="flex-1 -mx-6">
+        <div className="space-y-4 px-6">
           {state.items.length === 0 ? (
             <div className="text-center text-muted-foreground py-10">
               <ShoppingCart className="mx-auto h-12 w-12" />
@@ -148,7 +161,9 @@ export default function ShoppingCartSheet() {
                     >
                       <Minus className="h-3 w-3" />
                     </Button>
-                    <span className="w-6 text-center">{item.quantity}</span>
+                    <span className="w-6 text-center text-sm font-medium">
+                      {item.quantity}
+                    </span>
                     <Button
                       variant="outline"
                       size="icon"
@@ -175,15 +190,18 @@ export default function ShoppingCartSheet() {
         </div>
       </ScrollArea>
       {state.items.length > 0 && (
-        <div className="mt-auto border-t pt-4 space-y-2">
-          <div className="flex justify-between text-muted-foreground">
-            <span>Subtotal</span>
-            <span>${subtotal.toFixed(2)}</span>
+        <div className="mt-auto border-t -mx-6 px-6 pt-4 space-y-4">
+          <div className="space-y-1 text-sm">
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Subtotal</span>
+              <span>${subtotal.toFixed(2)}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Discount</span>
+              <span className="text-green-600">-${discount.toFixed(2)}</span>
+            </div>
           </div>
-          <div className="flex justify-between text-muted-foreground">
-            <span>Discount</span>
-            <span className="text-green-600">-${discount.toFixed(2)}</span>
-          </div>
+          <Separator />
           <div className="flex justify-between font-bold text-lg mb-4">
             <span>Total</span>
             <span>${total.toFixed(2)}</span>
@@ -198,24 +216,27 @@ export default function ShoppingCartSheet() {
 const CheckoutDialog = () => (
   <AlertDialog>
     <AlertDialogTrigger asChild>
-      <Button size="lg" className="w-full">
-        Proceed to Checkout
+      <Button size="lg" className="w-full text-lg">
+        Proceed to Checkout <ArrowRight className="ml-2 h-5 w-5" />
       </Button>
     </AlertDialogTrigger>
     <AlertDialogContent>
       <AlertDialogHeader>
-        <AlertDialogTitle className="font-headline">
-          Create an Account?
+        <AlertDialogTitle className="font-headline text-2xl flex items-center gap-2">
+          <CreditCard className="text-primary" />
+          Ready to Checkout?
         </AlertDialogTitle>
-        <AlertDialogDescription>
-          For a better experience and to save your order history, create an
-          account. Or, you can continue as a guest.
+        <AlertDialogDescription className="pt-2">
+          To save your order history and get personalized recommendations, create
+          an account. Or, you can quickly continue as a guest.
         </AlertDialogDescription>
       </AlertDialogHeader>
-      <AlertDialogFooter>
+      <AlertDialogFooter className="grid grid-cols-2 gap-4">
         <AlertDialogCancel>Continue as Guest</AlertDialogCancel>
-        <AlertDialogAction>Create Account</AlertDialogAction>
+        <AlertDialogAction>Create My Account</AlertDialogAction>
       </AlertDialogFooter>
     </AlertDialogContent>
   </AlertDialog>
 );
+
+    
