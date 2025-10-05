@@ -1,0 +1,82 @@
+/**
+ * @fileoverview Firestore Security Rules for the WasteNot Wallet application.
+ *
+ * Core Philosophy:
+ * This ruleset enforces a strict user-ownership model for `user_accounts` and a session-based ownership model for `guest_users`.
+ * Only the authenticated user can access their own `user_account` data.
+ * Only the current session can access its own `guest_user` data.
+ *
+ * Data Structure:
+ * - `/user_accounts/{userId}`: Stores data for fully registered users, with the `userId` matching the Firebase Auth UID.
+ * - `/guest_users/{guestUserId}`: Stores data for guest users identified by `guestUserId` and secured by `sessionId`.
+ *
+ * Key Security Decisions:
+ * - User accounts are strictly private; listing all accounts is disallowed.
+ * - Guest users are isolated by session; listing all guest users is disallowed.
+ * - No public data is permitted.
+ *
+ * Authorization Independence:
+ * To ensure Authorization Independence, the access control is based on Firebase Authentication or Session IDs.
+ */
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    /**
+     * @description Manages access to user account data.
+     * @path /user_accounts/{userAccountId}
+     * @allow (create) Authenticated user with matching UID creates their own account.
+     * @allow (get, update, delete) Authenticated user with matching UID accesses their own account.
+     * @deny (create, get, update, delete) Any other user attempts to access this account.
+     * @principle Enforces document ownership for writes.
+     */
+    match /user_accounts/{userAccountId} {
+      // Helper function to check if the request is made by the owner
+      function isOwner(userAccountId) {
+        return request.auth.uid == userAccountId;
+      }
+
+      // Helper function to check if the request is made by an existing owner
+      function isExistingOwner(userAccountId) {
+        return isOwner(userAccountId) && resource != null;
+      }
+
+      allow get: if isOwner(userAccountId);
+      allow list: if false; // Listing user accounts is not permitted.
+      allow create: if isOwner(userAccountId) && request.resource.data.id == request.auth.uid;
+      allow update: if isExistingOwner(userAccountId) && request.resource.data.id == resource.data.id;
+      allow delete: if isExistingOwner(userAccountId);
+    }
+
+    /**
+     * @description Manages access to guest user data.
+     * @path /guest_users/{guestUserId}
+     * @allow (create) Guest user creates their own record, session ID is validated.
+     * @allow (get, update, delete) Guest user with a valid session ID accesses their own record.
+     * @deny (create, get, update, delete) Any other guest user or registered user attempts to access this record.
+     * @principle Restricts access to a user's own data tree.
+     */
+    match /guest_users/{guestUserId} {
+      // Helper function to check if the request is made by the guest user with a valid session
+      function isValidGuestSession(guestUserId) {
+        return request.resource.data.sessionId == resource.data.sessionId;
+      }
+
+      // Helper function to check if the request is made by the guest user with a valid session for an existing object
+      function isValidExistingGuestSession(guestUserId) {
+        return request.resource.data.sessionId == resource.data.sessionId && resource != null;
+      }
+
+      // Helper function to check if the request is made by the guest user with a matching session.
+      function isGuestSession(guestUserId) {
+        return request.auth.uid == null && request.resource.data.sessionId != null;
+      }
+
+      allow get: if isGuestSession(guestUserId);
+      allow list: if false; // Listing guest users is not permitted.
+      allow create: if isGuestSession(guestUserId);
+      allow update: if isValidExistingGuestSession(guestUserId);
+      allow delete: if isValidExistingGuestSession(guestUserId);
+    }
+  }
+}

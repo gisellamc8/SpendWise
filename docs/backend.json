@@ -1,0 +1,120 @@
+{
+  "entities": {
+    "UserAccount": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "UserAccount",
+      "type": "object",
+      "description": "Represents a user account within the WasteNot Wallet application. Does not contain authentication data.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the UserAccount entity."
+        },
+        "email": {
+          "type": "string",
+          "description": "User's email address.",
+          "format": "email"
+        },
+        "firstName": {
+          "type": "string",
+          "description": "User's first name."
+        },
+        "lastName": {
+          "type": "string",
+          "description": "User's last name."
+        },
+        "registrationDate": {
+          "type": "string",
+          "description": "Date and time the user registered.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "email",
+        "firstName",
+        "lastName",
+        "registrationDate"
+      ]
+    },
+    "GuestUser": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "GuestUser",
+      "type": "object",
+      "description": "Represents a guest user, for checkout without full registration.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the GuestUser entity."
+        },
+        "sessionId": {
+          "type": "string",
+          "description": "A session identifier to track the guest user's activity."
+        },
+        "lastActivity": {
+          "type": "string",
+          "description": "Timestamp of the guest user's last activity.",
+          "format": "date-time"
+        },
+        "email": {
+          "type": "string",
+          "description": "User's email address.",
+          "format": "email"
+        },
+        "conversionToAccountId": {
+          "type": "string",
+          "description": "Reference to UserAccount if the guest user converts to a registered user. (Relationship: GuestUser 1:1 UserAccount)",
+          "format": "uuid"
+        }
+      },
+      "required": [
+        "id",
+        "sessionId",
+        "lastActivity"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/user_accounts/{userAccountId}",
+        "definition": {
+          "entityName": "UserAccount",
+          "schema": {
+            "$ref": "#/backend/entities/UserAccount"
+          },
+          "description": "Stores registered user account information. Access is restricted to the authenticated user with a matching UID. The 'userAccountId' path parameter corresponds to the Firebase Authentication UID.",
+          "params": [
+            {
+              "name": "userAccountId",
+              "description": "The Firebase Authentication UID of the user."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/guest_users/{guestUserId}",
+        "definition": {
+          "entityName": "GuestUser",
+          "schema": {
+            "$ref": "#/backend/entities/GuestUser"
+          },
+          "description": "Stores guest user information. Access is restricted to the guest user's session, which should be verified through the 'sessionId' field. The 'guestUserId' path parameter is the unique identifier for the guest user.",
+          "params": [
+            {
+              "name": "guestUserId",
+              "description": "The unique identifier for the guest user."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "This design prioritizes Authorization Independence to ensure secure and scalable operations. It leverages structural segregation to maintain a homogeneous security posture within collections. The core entities, `UserAccount` and `GuestUser`, are stored in separate collections to reflect their distinct lifecycles and access requirements. No denormalization is needed in this case as all data is private to the authenticated user or the guest user's session. The design facilitates QAPs by restricting access based on authentication (`request.auth.uid`) or session ID."
+  }
+}
