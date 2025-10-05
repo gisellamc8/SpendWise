@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 import { CartProvider } from '@/context/cart-context';
+import { FirebaseClientProvider } from '@/firebase';
 
 export const metadata: Metadata = {
   title: 'SpendWise',
@@ -28,10 +29,12 @@ export default function RootLayout({
         />
       </head>
       <body className="font-body antialiased min-h-screen flex flex-col">
-        <CartProvider>
-          {children}
-          <Toaster />
-        </CartProvider>
+        <FirebaseClientProvider>
+          <CartProvider>
+            {children}
+            <Toaster />
+          </CartProvider>
+        </FirebaseClientProvider>
       </body>
     </html>
   );

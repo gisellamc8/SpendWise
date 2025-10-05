@@ -34,10 +34,14 @@ import { useToast } from '@/hooks/use-toast';
 import { Badge } from './ui/badge';
 import { cn } from '@/lib/utils';
 import { Separator } from './ui/separator';
+import Link from 'next/link';
+import { useAuth, initiateAnonymousSignIn } from '@/firebase';
+
 
 export default function ShoppingCartSheet() {
   const { state, dispatch, subtotal, discount, total } = useCart();
   const { toast } = useToast();
+  const auth = useAuth();
 
   const handleQuantityChange = (id: string, quantity: number) => {
     dispatch({ type: 'UPDATE_QUANTITY', payload: { id, quantity } });
@@ -107,6 +111,10 @@ export default function ShoppingCartSheet() {
         description: `${coupon.title}`,
       });
     }
+  };
+
+  const handleGuestCheckout = () => {
+    initiateAnonymousSignIn(auth);
   };
 
   return (
@@ -274,14 +282,14 @@ export default function ShoppingCartSheet() {
               You saved ${discount.toFixed(2)}!
             </p>
           )}
-          <CheckoutDialog />
+          <CheckoutDialog onGuestCheckout={handleGuestCheckout} />
         </div>
       )}
     </div>
   );
 }
 
-const CheckoutDialog = () => (
+const CheckoutDialog = ({ onGuestCheckout }: { onGuestCheckout: () => void }) => (
   <AlertDialog>
     <AlertDialogTrigger asChild>
       <Button size="lg" className="w-full text-lg">
@@ -300,8 +308,10 @@ const CheckoutDialog = () => (
         </AlertDialogDescription>
       </AlertDialogHeader>
       <AlertDialogFooter className="grid grid-cols-2 gap-4">
-        <AlertDialogCancel>Continue as Guest</AlertDialogCancel>
-        <AlertDialogAction>Create My Account</AlertDialogAction>
+        <AlertDialogCancel onClick={onGuestCheckout}>Continue as Guest</AlertDialogCancel>
+        <AlertDialogAction asChild>
+          <Link href="/login">Create My Account</Link>
+        </AlertDialogAction>
       </AlertDialogFooter>
     </AlertDialogContent>
   </AlertDialog>

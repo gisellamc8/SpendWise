@@ -11,7 +11,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Button } from './ui/button';
-import { ShoppingCart, User } from 'lucide-react';
+import { LogOut, ShoppingCart, User } from 'lucide-react';
 import ShoppingCartSheet from './shopping-cart';
 import {
   Sheet,
@@ -21,18 +21,27 @@ import {
   SheetTrigger,
 } from './ui/sheet';
 import { useCart } from '@/context/cart-context';
+import { useAuth, useUser, initiateAnonymousSignIn } from '@/firebase';
+import Link from 'next/link';
 
 export default function AppHeader() {
   const { totalItems } = useCart();
+  const { user, isUserLoading } = useUser();
+  const auth = useAuth();
+
+  const handleGuestLogin = () => {
+    initiateAnonymousSignIn(auth);
+  };
+
   return (
     <header className="border-b sticky top-0 bg-background/95 backdrop-blur-sm z-10">
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-        <div className="flex items-center gap-3">
+        <Link href="/" className="flex items-center gap-3">
           <AppLogo width={36} height={36} />
           <h1 className="text-2xl font-bold font-headline text-foreground">
             SpendWise
           </h1>
-        </div>
+        </Link>
         <div className="flex items-center gap-4">
           <Notifications />
           <Sheet>
@@ -60,16 +69,41 @@ export default function AppHeader() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
-              <DropdownMenuLabel>My Account</DropdownMenuLabel>
+              <DropdownMenuLabel>
+                {user ? user.email : 'My Account'}
+              </DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>
-                <Button className="w-full" variant="outline">
-                  Log In
-                </Button>
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Button className="w-full">Continue as Guest</Button>
-              </DropdownMenuItem>
+              {isUserLoading ? (
+                <DropdownMenuItem>Loading...</DropdownMenuItem>
+              ) : user ? (
+                <DropdownMenuItem>
+                  <Button
+                    className="w-full"
+                    variant="outline"
+                    onClick={() => auth.signOut()}
+                  >
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Log Out
+                  </Button>
+                </DropdownMenuItem>
+              ) : (
+                <>
+                  <DropdownMenuItem>
+                    <Button className="w-full" asChild>
+                      <Link href="/login">Log In / Sign Up</Link>
+                    </Button>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <Button
+                      className="w-full"
+                      variant="secondary"
+                      onClick={handleGuestLogin}
+                    >
+                      Continue as Guest
+                    </Button>
+                  </DropdownMenuItem>
+                </>
+              )}
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
