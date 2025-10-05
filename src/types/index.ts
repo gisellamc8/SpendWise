@@ -3,7 +3,7 @@ import placeholderData from '@/lib/placeholder-images.json';
 import { differenceInDays, parseISO } from 'date-fns';
 
 const imageMap = new Map(
-  placeholderData.placeholderImages.map((img: { id: string; imageUrl: string; imageHint: string; }) => [
+  placeholderData.map((img: { id: string; imageUrl: string; imageHint: string; }) => [
     img.id,
     { url: img.imageUrl, hint: img.imageHint },
   ])
