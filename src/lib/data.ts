@@ -259,3 +259,5 @@ export const notifications: Notification[] = [
 
 export const newArrivals = products.slice(20, 23);
 export const previousOrderItems = products.slice(3, 8);
+
+    
