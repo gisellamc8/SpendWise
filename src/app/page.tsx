@@ -32,7 +32,6 @@ export default function Home() {
             </div>
           </div>
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mt-8">
-            {/* Left Column - New Arrivals */}
             <aside className="lg:col-span-3 space-y-8">
               <Card>
                 <CardHeader>
@@ -61,7 +60,6 @@ export default function Home() {
               </Card>
             </aside>
 
-            {/* Center Column - Products */}
             <section className="lg:col-span-6 space-y-8">
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-2 gap-6">
                 {products.map((product) => (
@@ -70,7 +68,6 @@ export default function Home() {
               </div>
             </section>
 
-            {/* Right Column - Sales & Coupons */}
             <aside className="lg:col-span-3 space-y-8">
               <Card>
                 <CardHeader>
