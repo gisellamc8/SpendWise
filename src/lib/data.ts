@@ -1,4 +1,3 @@
-
 import { Product, Coupon, Notification, processProductData } from '@/types';
 
 const rawProductData = [
@@ -172,7 +171,7 @@ const rawProductData = [
   { brand: 'Cape Gourmet', item_name: 'Frozen Pizza', price: 9.07, aisle: 5, shelf: 'top', calories: 300, nutrition: 'Protein: 12g; Fat: 14g; Carbs: 33g', stock: 8, sustainability: 0.49, expiration_date: '2025-11-30', rating: 3.0 },
 ];
 
-export const products = processProductData(rawProductData);
+export const products: Product[] = processProductData(rawProductData);
 
 export const coupons: Coupon[] = [
   {
@@ -260,5 +259,3 @@ export const notifications: Notification[] = [
 
 export const newArrivals = products.slice(20, 23);
 export const previousOrderItems = products.slice(3, 8);
-
-    
