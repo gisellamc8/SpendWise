@@ -1,4 +1,4 @@
-import { Leaf, Wallet } from 'lucide-react';
+import { Leaf, Wallet, Bookmark } from 'lucide-react';
 import type { SVGProps } from 'react';
 
 export const AppLogo = (props: SVGProps<SVGSVGElement>) => {
@@ -17,3 +17,5 @@ export const AppLogo = (props: SVGProps<SVGSVGElement>) => {
     </div>
   );
 };
+
+export { Bookmark };

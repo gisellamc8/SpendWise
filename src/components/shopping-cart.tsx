@@ -12,6 +12,7 @@ import {
   Tag,
   ArrowRight,
   CreditCard,
+  Bookmark,
 } from 'lucide-react';
 import {
   AlertDialog,
@@ -44,6 +45,26 @@ export default function ShoppingCartSheet() {
 
   const handleRemoveItem = (id: string) => {
     dispatch({ type: 'REMOVE_ITEM', payload: { id } });
+  };
+
+  const handleSaveForLater = (id: string) => {
+    dispatch({ type: 'SAVE_FOR_LATER', payload: { id } });
+     toast({
+      title: 'Item Saved',
+      description: 'The item has been moved to your "Saved for Later" list.',
+    });
+  };
+
+  const handleMoveToCart = (id: string) => {
+    dispatch({ type: 'MOVE_TO_CART', payload: { id } });
+     toast({
+      title: 'Item Moved to Cart',
+      description: 'The item has been moved back to your shopping cart.',
+    });
+  };
+
+  const handleRemoveSavedItem = (id: string) => {
+    dispatch({ type: 'REMOVE_SAVED_ITEM', payload: { id } });
   };
 
   const eligibleCoupons = useMemo(() => {
@@ -174,6 +195,10 @@ export default function ShoppingCartSheet() {
                     >
                       <Plus className="h-3 w-3" />
                     </Button>
+                     <Button variant="ghost" size="sm" className="h-6 text-xs" onClick={() => handleSaveForLater(item.product.id)}>
+                      <Bookmark className="mr-1 h-3 w-3" />
+                      Save
+                    </Button>
                   </div>
                 </div>
                 <Button
@@ -188,6 +213,42 @@ export default function ShoppingCartSheet() {
             ))
           )}
         </div>
+         {state.savedForLater.length > 0 && (
+          <>
+            <Separator className="my-4" />
+            <div className="px-6">
+              <h3 className="text-lg font-semibold mb-2">Saved for Later</h3>
+              <div className="space-y-4">
+                {state.savedForLater.map((item) => (
+                  <div key={item.product.id} className="flex items-start gap-4">
+                    <Image
+                      src={item.product.imageUrl}
+                      alt={item.product.name}
+                      width={64}
+                      height={64}
+                      className="rounded-md object-cover"
+                      data-ai-hint={item.product.imageHint}
+                    />
+                    <div className="flex-1">
+                      <p className="font-semibold">{item.product.name}</p>
+                      <p className="text-sm text-muted-foreground">
+                        ${item.product.price.toFixed(2)}
+                      </p>
+                       <div className="flex items-center gap-2 mt-2">
+                         <Button size="sm" className="h-7" onClick={() => handleMoveToCart(item.product.id)}>
+                          Move to Cart
+                        </Button>
+                         <Button variant="ghost" size="sm" className="h-7" onClick={() => handleRemoveSavedItem(item.product.id)}>
+                          Remove
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </>
+        )}
       </ScrollArea>
       {state.items.length > 0 && (
         <div className="mt-auto border-t -mx-6 px-6 pt-4 space-y-4">

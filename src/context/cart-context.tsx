@@ -13,6 +13,7 @@ import { useToast } from '@/hooks/use-toast';
 
 type CartState = {
   items: CartItem[];
+  savedForLater: CartItem[];
   appliedCoupons: Coupon[];
 };
 
@@ -21,7 +22,10 @@ type CartAction =
   | { type: 'REMOVE_ITEM'; payload: { id: string } }
   | { type: 'UPDATE_QUANTITY'; payload: { id: string; quantity: number } }
   | { type: 'CLEAR_CART' }
-  | { type: 'TOGGLE_COUPON'; payload: Coupon };
+  | { type: 'TOGGLE_COUPON'; payload: Coupon }
+  | { type: 'SAVE_FOR_LATER'; payload: { id: string } }
+  | { type: 'MOVE_TO_CART'; payload: { id: string } }
+  | { type: 'REMOVE_SAVED_ITEM'; payload: { id: string } };
 
 const CartContext = createContext<
   | {
@@ -93,6 +97,44 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
     }
     case 'CLEAR_CART':
       return { ...state, items: [], appliedCoupons: [] };
+
+    case 'SAVE_FOR_LATER': {
+      const itemToSave = state.items.find(item => item.product.id === action.payload.id);
+      if (!itemToSave) return state;
+      
+      const alreadySaved = state.savedForLater.some(item => item.product.id === action.payload.id);
+      if (alreadySaved) {
+         return {
+          ...state,
+          items: state.items.filter((item) => item.product.id !== action.payload.id),
+        };
+      }
+
+      return {
+        ...state,
+        items: state.items.filter(item => item.product.id !== action.payload.id),
+        savedForLater: [...state.savedForLater, { ...itemToSave, quantity: 1}],
+      };
+    }
+    case 'MOVE_TO_CART': {
+      const itemToMove = state.savedForLater.find(item => item.product.id === action.payload.id);
+      if (!itemToMove) return state;
+
+      const newItems = [...state.items, { ...itemToMove, quantity: 1}];
+
+      return {
+        ...state,
+        savedForLater: state.savedForLater.filter(item => item.product.id !== action.payload.id),
+        items: newItems,
+      };
+    }
+     case 'REMOVE_SAVED_ITEM':
+      return {
+        ...state,
+        savedForLater: state.savedForLater.filter(
+          (item) => item.product.id !== action.payload.id
+        ),
+      };
     default:
       return state;
   }
@@ -101,6 +143,7 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
 export const CartProvider = ({ children }: { children: ReactNode }) => {
   const [state, dispatch] = useReducer(cartReducer, {
     items: [],
+    savedForLater: [],
     appliedCoupons: [],
   });
   const { toast } = useToast();
