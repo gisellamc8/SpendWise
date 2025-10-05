@@ -4,9 +4,8 @@ import { Toaster } from '@/components/ui/toaster';
 import { CartProvider } from '@/context/cart-context';
 
 export const metadata: Metadata = {
-  title: 'WasteNot Wallet',
-  description:
-    "We've turned shopping into a no-commitment, anxiety-free transaction.",
+  title: 'SpendWise',
+  description: 'Smart shopping, less waste.',
 };
 
 export default function RootLayout({

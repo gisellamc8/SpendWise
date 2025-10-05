@@ -39,98 +39,82 @@ export default function ShoppingCartSheet() {
   };
 
   return (
-    <Card className="sticky top-24">
-      <CardHeader>
-        <CardTitle className="font-headline flex items-center justify-between">
-          <span>Shopping Cart</span>
-          <BadgeCart count={totalItems} />
-        </CardTitle>
-        <CardDescription>
-          Your selected items for purchase.
-        </CardDescription>
-        <div className="relative mt-2">
-            <p className="text-xs text-muted-foreground text-center bg-card p-2 rounded-md border border-dashed">The Coupon field is unintrusive.</p>
-        </div>
-      </CardHeader>
-      <CardContent>
-        <ScrollArea className="h-64 pr-4">
-          <div className="space-y-4">
-            {state.items.length === 0 ? (
-              <div className="text-center text-muted-foreground py-10">
-                <ShoppingCart className="mx-auto h-12 w-12" />
-                <p className="mt-4">Your cart is empty.</p>
-              </div>
-            ) : (
-              state.items.map((item) => (
-                <div key={item.product.id} className="flex items-start gap-4">
-                  <Image
-                    src={item.product.imageUrl}
-                    alt={item.product.name}
-                    width={64}
-                    height={64}
-                    className="rounded-md object-cover"
-                    data-ai-hint={item.product.imageHint}
-                  />
-                  <div className="flex-1">
-                    <p className="font-semibold">{item.product.name}</p>
-                    <p className="text-sm text-muted-foreground">
-                      ${item.product.price.toFixed(2)}
-                    </p>
-                    <div className="flex items-center gap-2 mt-2">
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        className="h-6 w-6"
-                        onClick={() =>
-                          handleQuantityChange(
-                            item.product.id,
-                            item.quantity - 1
-                          )
-                        }
-                      >
-                        <Minus className="h-3 w-3" />
-                      </Button>
-                      <span className="w-6 text-center">{item.quantity}</span>
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        className="h-6 w-6"
-                        onClick={() =>
-                          handleQuantityChange(
-                            item.product.id,
-                            item.quantity + 1
-                          )
-                        }
-                      >
-                        <Plus className="h-3 w-3" />
-                      </Button>
-                    </div>
+    <div className="h-full flex flex-col">
+      <div className="relative mt-4">
+        <p className="text-xs text-muted-foreground text-center bg-card p-2 rounded-md border border-dashed">
+          The Coupon field is unintrusive.
+        </p>
+      </div>
+      <ScrollArea className="flex-1 my-4 pr-4">
+        <div className="space-y-4">
+          {state.items.length === 0 ? (
+            <div className="text-center text-muted-foreground py-10">
+              <ShoppingCart className="mx-auto h-12 w-12" />
+              <p className="mt-4">Your cart is empty.</p>
+            </div>
+          ) : (
+            state.items.map((item) => (
+              <div key={item.product.id} className="flex items-start gap-4">
+                <Image
+                  src={item.product.imageUrl}
+                  alt={item.product.name}
+                  width={64}
+                  height={64}
+                  className="rounded-md object-cover"
+                  data-ai-hint={item.product.imageHint}
+                />
+                <div className="flex-1">
+                  <p className="font-semibold">{item.product.name}</p>
+                  <p className="text-sm text-muted-foreground">
+                    ${item.product.price.toFixed(2)}
+                  </p>
+                  <div className="flex items-center gap-2 mt-2">
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="h-6 w-6"
+                      onClick={() =>
+                        handleQuantityChange(item.product.id, item.quantity - 1)
+                      }
+                    >
+                      <Minus className="h-3 w-3" />
+                    </Button>
+                    <span className="w-6 text-center">{item.quantity}</span>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="h-6 w-6"
+                      onClick={() =>
+                        handleQuantityChange(item.product.id, item.quantity + 1)
+                      }
+                    >
+                      <Plus className="h-3 w-3" />
+                    </Button>
                   </div>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-8 w-8 text-muted-foreground"
-                    onClick={() => handleRemoveItem(item.product.id)}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
                 </div>
-              ))
-            )}
-          </div>
-        </ScrollArea>
-      </CardContent>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8 text-muted-foreground"
+                  onClick={() => handleRemoveItem(item.product.id)}
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </div>
+            ))
+          )}
+        </div>
+      </ScrollArea>
       {state.items.length > 0 && (
-        <CardFooter className="flex-col items-stretch space-y-4">
-          <Separator />
-          <div className="flex justify-between font-bold text-lg">
+        <div className="mt-auto border-t pt-4">
+          <div className="flex justify-between font-bold text-lg mb-4">
             <span>Total</span>
             <span>${totalPrice.toFixed(2)}</span>
           </div>
           <CheckoutDialog />
-        </CardFooter>
+        </div>
       )}
-    </Card>
+    </div>
   );
 }
 
@@ -158,12 +142,3 @@ const CheckoutDialog = () => (
     </AlertDialogContent>
   </AlertDialog>
 );
-
-const BadgeCart = ({ count }: { count: number }) => {
-  if (count === 0) return null;
-  return (
-    <div className="bg-primary text-primary-foreground text-xs font-bold rounded-full h-6 w-6 flex items-center justify-center">
-      {count}
-    </div>
-  );
-};

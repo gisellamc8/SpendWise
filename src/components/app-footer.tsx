@@ -7,7 +7,7 @@ export default function AppFooter() {
           Find a lower price? We'll match it. Shop with confidence.
         </p>
         <p className="text-xs">
-          © {new Date().getFullYear()} WasteNot Wallet. All Rights Reserved.
+          © {new Date().getFullYear()} SpendWise. All Rights Reserved.
         </p>
       </div>
     </footer>

@@ -12,7 +12,6 @@ import { Search, ShoppingCart, Tag } from 'lucide-react';
 import { products, coupons, newArrivals } from '@/lib/data';
 import AppHeader from '@/components/app-header';
 import ProductCard from '@/components/product-card';
-import ShoppingCartSheet from '@/components/shopping-cart';
 import AppFooter from '@/components/app-footer';
 import RepeatOrderSuggestion from '@/components/ai/repeat-order-suggestion';
 
@@ -77,7 +76,7 @@ export default function Home() {
             </aside>
 
             {/* Center Column */}
-            <section className="lg:col-span-6 space-y-8">
+            <section className="lg:col-span-9 space-y-8">
               <RepeatOrderSuggestion />
               <div className="relative">
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground h-5 w-5" />
@@ -92,22 +91,6 @@ export default function Home() {
                 ))}
               </div>
             </section>
-
-            {/* Right Column */}
-            <aside className="lg:col-span-3 space-y-8">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="font-headline">My Account</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <Button className="w-full" variant="outline">
-                    Log In
-                  </Button>
-                  <Button className="w-full">Continue as Guest</Button>
-                </CardContent>
-              </Card>
-              <ShoppingCartSheet />
-            </aside>
           </div>
         </div>
       </main>
