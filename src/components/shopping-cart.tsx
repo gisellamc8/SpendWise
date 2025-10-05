@@ -124,17 +124,6 @@ export default function ShoppingCartSheet() {
                 </p>
               )}
             </div>
-
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={applyBestCoupon}
-              aria-label="Apply Best Coupon"
-              disabled={eligibleCoupons.length === 0}
-              className="h-8 w-8 shrink-0"
-            >
-              <Sparkles className="h-4 w-4" />
-            </Button>
           </div>
         </div>
       </div>
