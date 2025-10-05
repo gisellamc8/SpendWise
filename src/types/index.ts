@@ -63,6 +63,16 @@ export const processProductData = (data: any[]): Product[] => {
     const id = `prod_${p.brand.replace(/\s+/g, '-')}_${index + 1}`;
     const { url, hint } = getProductImage(id);
     const expirationDate = parseISO(p.expiration_date);
+    const simpleHash = (str: string) => {
+      let hash = 0;
+      for (let i = 0; i < str.length; i++) {
+        const char = str.charCodeAt(i);
+        hash = (hash << 5) - hash + char;
+        hash |= 0; // Convert to 32bit integer
+      }
+      return Math.abs(hash);
+    };
+
     return {
       id: id,
       brand: p.brand,
@@ -79,11 +89,9 @@ export const processProductData = (data: any[]): Product[] => {
       expirationDays: differenceInDays(expirationDate, new Date()),
       imageUrl: url,
       imageHint: hint,
-      couponEligible: p.couponEligible ?? Math.random() > 0.5,
-      onSale: p.onSale ?? Math.random() > 0.5,
-      snapEligible: p.snapEligible ?? Math.random() > 0.5,
+      couponEligible: p.couponEligible ?? (simpleHash(id + 'coupon') % 2 === 0),
+      onSale: p.onSale ?? (simpleHash(id + 'sale') % 3 === 0),
+      snapEligible: p.snapEligible ?? (simpleHash(id + 'snap') % 4 === 0),
     };
   });
 };
-
-    
