@@ -18,15 +18,23 @@ import AppFooter from '@/components/app-footer';
 import RepeatOrderSuggestion from '@/components/ai/repeat-order-suggestion';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import StarRating from '@/components/star-rating';
 
 export default function Home() {
   const [searchTerm, setSearchTerm] = useState('');
   const [filters, setFilters] = useState({
-    highRating: false,
     couponEligible: false,
     onSale: false,
     snapEligible: false,
   });
+  const [ratingFilter, setRatingFilter] = useState(0);
 
   const handleFilterChange = (filterName: keyof typeof filters) => {
     setFilters((prev) => ({ ...prev, [filterName]: !prev[filterName] }));
@@ -38,13 +46,13 @@ export default function Home() {
         product.name.toLowerCase().includes(searchTerm.toLowerCase())
       )
       .filter((product) => {
-        if (filters.highRating && product.rating < 4.5) return false;
+        if (ratingFilter > 0 && product.rating < ratingFilter) return false;
         if (filters.couponEligible && !product.couponEligible) return false;
         if (filters.onSale && !product.onSale) return false;
         if (filters.snapEligible && !product.snapEligible) return false;
         return true;
       });
-  }, [searchTerm, filters]);
+  }, [searchTerm, filters, ratingFilter]);
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -124,9 +132,35 @@ export default function Home() {
                        <Filter className="h-5 w-5 text-muted-foreground" />
                        <h3 className="text-md font-semibold">Filters:</h3>
                     </div>
-                    <div className="flex items-center space-x-2">
-                      <Checkbox id="highRating" checked={filters.highRating} onCheckedChange={() => handleFilterChange('highRating')} />
-                      <Label htmlFor="highRating">High Rating</Label>
+                     <div className="flex items-center space-x-2">
+                      <Select
+                        value={ratingFilter.toString()}
+                        onValueChange={(value) =>
+                          setRatingFilter(Number(value))
+                        }
+                      >
+                        <SelectTrigger className="w-[180px]">
+                          <SelectValue placeholder="Filter by rating" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="0">All Ratings</SelectItem>
+                          <SelectItem value="5">
+                            <StarRating rating={5} />
+                          </SelectItem>
+                           <SelectItem value="4">
+                            <StarRating rating={4} />
+                          </SelectItem>
+                          <SelectItem value="3">
+                            <StarRating rating={3} />
+                          </SelectItem>
+                          <SelectItem value="2">
+                            <StarRating rating={2} />
+                          </SelectItem>
+                          <SelectItem value="1">
+                            <StarRating rating={1} />
+                          </SelectItem>
+                        </SelectContent>
+                      </Select>
                     </div>
                     <div className="flex items-center space-x-2">
                       <Checkbox id="couponEligible" checked={filters.couponEligible} onCheckedChange={() => handleFilterChange('couponEligible')} />
